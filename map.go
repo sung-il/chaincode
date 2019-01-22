@@ -381,13 +381,13 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 	// 	return nil, errors.New("Failed decoding myTableName")
 	// }
 
-	ccTest_ID := "1e91e194d6681d0b358897730171392"
+	ccTestID := "1e91e194d6681d0b358897730171392"
 
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: ccTest_ID}}
+	col1 := shim.Column{Value: &shim.Column_String_{String_: ccTestID}}
 	columns = append(columns, col1)
 
-	row, err := stub.GetRow(myTable.Name, columns)
+	row, err := stub.GetRow("device", columns)
 	if err != nil {
 		myLogger.Debugf("Failed get data [%s]: [%s]", string(myTable.Name), err)
 		return nil, fmt.Errorf("Failed  get data [%s]: [%s]", string(myTable.Name), err)
