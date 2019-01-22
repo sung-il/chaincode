@@ -36,11 +36,7 @@ const (
 	DB_NAME		= "thingsboard"
 )
 
-// AssetManagementChaincode is simple chaincode implementing a basic Asset Management system
-// with access control enforcement at chaincode level.
-// Look here for more information on how to implement access control at chaincode level:
-// https://github.com/hyperledger/fabric/blob/master/docs/tech/application-ACL.md
-// An asset is simply represented by a string.
+
 type AssetManagementChaincode struct {
 }
 
@@ -77,22 +73,6 @@ func (t *AssetManagementChaincode) Init(stub shim.ChaincodeStubInterface, functi
 	if err != nil {
 		return nil, errors.New("Failed creating deviceCredentials table.")
 	}
-
-	// // Set the admin
-	// // The metadata will contain the certificate of the administrator
-	// adminCert, err := stub.GetCallerMetadata()
-	// if err != nil {
-	// 	myLogger.Debug("Failed getting metadata")
-	// 	return nil, errors.New("Failed getting metadata.")
-	// }
-	// if len(adminCert) == 0 {
-	// 	myLogger.Debug("Invalid admin certificate. Empty.")
-	// 	return nil, errors.New("Invalid admin certificate. Empty.")
-	// }
-
-	// myLogger.Debug("The administrator is [%x]", adminCert)
-
-	// stub.PutState("admin", adminCert)
 
 	myLogger.Debug("Init Chaincode...done")
 
@@ -168,8 +148,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: type}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: name}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: search_text}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: tenant_id}}
-			},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: tenant_id}}},
 		})
 
 		if !ok && err == nil {
@@ -221,8 +200,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: credentials_id}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: credentials_type}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: credentials_value}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: device_id}}
-			},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: device_id}}},
 		})
 
 		if !ok && err == nil {
