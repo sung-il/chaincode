@@ -25,6 +25,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/core/crypto/primitives"
 	_ "github.com/lib/pq"
+	logging "github.com/op/go-logging"
 )
 
 var myLogger = logging.MustGetLogger("asset_mgm")
