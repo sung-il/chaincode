@@ -355,36 +355,30 @@ func (t *AssetManagementChaincode) Invoke(stub shim.ChaincodeStubInterface, func
 func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	myLogger.Debugf("Query [%s]", function)
 
-	// if function != "query" {
-	// 	return nil, errors.New("Invalid query function name. Expecting 'query' but found '" + function + "'")
-	// }
+	if function != "query" {
+		return nil, errors.New("Invalid query function name. Expecting 'query' but found '" + function + "'")
+	}
 
-	// var err error
+	var err error
 
-	// if len(args) != 1 {
-	// 	myLogger.Debug("Incorrect number of arguments. Expecting name of an asset to query")
-	// 	return nil, errors.New("Incorrect number of arguments. Expecting name of an asset to query")
-	// }
+	if len(args) != 1 {
+		myLogger.Debug("Incorrect number of arguments. Expecting name of an asset to query")
+		return nil, errors.New("Incorrect number of arguments. Expecting name of an asset to query")
+	}
 
-	// // Who is the owner of the asset?
-	// asset := args[0]
+	tableName := args[0]
 
-	// myLogger.Debugf("Arg [%s]", string(asset))
+	myLogger.Debugf("Arg [%s]", string(tableName))
 
-	// var columns []shim.Column
-	// col1 := shim.Column{Value: &shim.Column_String_{String_: asset}}
-	// columns = append(columns, col1)
+	myTable, err := stub.GetTable(tableName)
+	if err != nil {
+		myLogger.Debugf("Failed get table [%s]: [%s]", string(tableName), err)
+		return nil, fmt.Errorf("Failed get table [%s]: [%s]", string(tableName), err)
+	}
 
-	// row, err := stub.GetRow("AssetsOwnership", columns)
-	// if err != nil {
-	// 	myLogger.Debugf("Failed retriving asset [%s]: [%s]", string(asset), err)
-	// 	return nil, fmt.Errorf("Failed retriving asset [%s]: [%s]", string(asset), err)
-	// }
+	myLogger.Debugf("Query done")
 
-	// myLogger.Debugf("Query done [% x]", row.Columns[1].GetBytes())
-
-	// return row.Columns[1].GetBytes(), nil
-	return nil, nil
+	return myTable.Name, nil
 }
 
 func main() {
