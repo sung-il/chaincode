@@ -361,7 +361,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 
 	var err error
 
-	if len(args) != 1 {
+	if len(args) != 0 {
 		myLogger.Debug("Incorrect number of arguments. Expecting name of an asset to query")
 		return nil, errors.New("Incorrect number of arguments. Expecting name of an asset to query")
 	}
@@ -370,11 +370,11 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 
 	myLogger.Debugf("Arg [%s]", string(tableName))
 
-	myTable, err := stub.GetTable(tableName)
-	if err != nil {
-		myLogger.Debugf("Failed get table [%s]: [%s]", string(tableName), err)
-		return nil, fmt.Errorf("Failed get table [%s]: [%s]", string(tableName), err)
-	}
+	// myTable, err := stub.GetTable(tableName)
+	// if err != nil {
+	// 	myLogger.Debugf("Failed get table [%s]: [%s]", string(tableName), err)
+	// 	return nil, fmt.Errorf("Failed get table [%s]: [%s]", string(tableName), err)
+	// }
 
 	// myTableName, err := base64.StdEncoding.DecodeString(myTable.Name)
 	// if err != nil {
@@ -384,18 +384,24 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 	ccTestID := "1e91e194d6681d0b358897730171392"
 
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: ccTestID}}
+	col1 := shim.Column{Value: &shim.Column_String_{String_: string(ccTestID)}}
 	columns = append(columns, col1)
 
-	row, err := stub.GetRow("device", columns)
+	row, err := stub.GetRow(tableName, columns)
 	if err != nil {
 		myLogger.Debugf("Failed get data [%s]: [%s]", string(myTable.Name), err)
 		return nil, fmt.Errorf("Failed  get data [%s]: [%s]", string(myTable.Name), err)
 	}
 
+	// row, err := stub.GetRow("device", columns)
+	// if err != nil {
+	// 	myLogger.Debugf("Failed get data [%s]: [%s]", string(myTable.Name), err)
+	// 	return nil, fmt.Errorf("Failed  get data [%s]: [%s]", string(myTable.Name), err)
+	// }
+
 	myLogger.Debugf("Query done [% x]", row.Columns[4].GetBytes())
 
-	return row.Columns[4].GetBytes_(), nil
+	return row.Columns[4].GetBytes(), nil
 
 	// return myTableName, nil
 }
