@@ -378,7 +378,12 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 
 	myLogger.Debugf("Query done")
 
-	return myTable.Name.GetBytes(), nil
+	myTableName, err := base64.StdEncoding.DecodeString(myTable.Name)
+	if err != nil {
+		return nil, errors.New("Failed decoding myTableName")
+	}
+
+	return myTableName, nil
 }
 
 func main() {
