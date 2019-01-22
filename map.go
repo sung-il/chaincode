@@ -17,25 +17,23 @@ limitations under the License.
 package main
 
 import (
+	"database/sql"
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"database/sql"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/core/crypto/primitives"
-	"github.com/op/go-logging"
 	_ "github.com/lib/pq"
 )
 
 var myLogger = logging.MustGetLogger("asset_mgm")
 
 const (
-	DB_USER		= "postgres"
-	DB_PASSWORD = ""
-	DB_NAME		= "thingsboard"
+	DB_USER     = "postgres",
+	DB_PASSWORD = "",
+	DB_NAME     = "thingsboard"
 )
-
 
 type AssetManagementChaincode struct {
 }
@@ -59,7 +57,7 @@ func (t *AssetManagementChaincode) Init(stub shim.ChaincodeStubInterface, functi
 		&shim.ColumnDefinition{Name: "tenantId", Type: shim.ColumnDefinition_BYTES, Key: false},
 	})
 	if err != nil {
-		return nil, errors.New("Failed creating device table.")
+		return nil, errors.New("Failed creating device table")
 	}
 
 	// Create deviceCredentials table
@@ -71,7 +69,7 @@ func (t *AssetManagementChaincode) Init(stub shim.ChaincodeStubInterface, functi
 		&shim.ColumnDefinition{Name: "deviceId", Type: shim.ColumnDefinition_BYTES, Key: false},
 	})
 	if err != nil {
-		return nil, errors.New("Failed creating deviceCredentials table.")
+		return nil, errors.New("Failed creating deviceCredentials table")
 	}
 
 	myLogger.Debug("Init Chaincode...done")
@@ -86,9 +84,8 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("Incorrect number of arguments. Expecting 0")
 	}
 
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		DB_USER, DB_PASSWORD, DB_NAME)
-		
+	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32810/thingsboard?sslmode=verify-full")
+
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
 		return nil, errors.New("Can't open postgresql")
@@ -101,113 +98,113 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	}
 	defer rows.Close()
 
-	var db_id string
-	var db_additional_info string
-	var db_customer_id string
-	var db_type string
-	var db_name string
-	var db_search_text string
-	var db_tenant_id string
+	var dbID string
+	var dbAdditionalInfo string
+	var dbCustomerID string
+	var dbType string
+	var dbName string
+	var dbSearchText string
+	var dbTenantID string
 	for rows.Next() {
-		err := rows.Scan(&db_id, &db_additional_info, &db_customer_id, &db_type, &db_name, &db_search_text, &db_tenant_id)
+		err := rows.Scan(&dbID, &dbAdditionalInfo, &dbCustomerID, &dbType, &dbName, &dbSearchText, &dbTenantID)
 		if err != nil {
 			return nil, errors.New("Can't get device table rows")
 		}
 
-		id := db_id
-		additional_info, err := base64.StdEncoding.DecodeString(db_additional_info)
+		ccID := dbID
+		ccAdditionalInfo, err := base64.StdEncoding.DecodeString(dbAdditionalInfo)
 		if err != nil {
-			return nil, errors.New("Failed decoding additional_info")
+			return nil, errors.New("Failed decoding dbAdditionalInfo")
 		}
-		customer_id, err := base64.StdEncoding.DecodeString(db_customer_id)
+		ccCustomerID, err := base64.StdEncoding.DecodeString(dbCustomerID)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_customer_id")
+			return nil, errors.New("Failed decoding dbCustomerID")
 		}
-		type, err := base64.StdEncoding.DecodeString(db_type)
+		ccTypes, err := base64.StdEncoding.DecodeString(dbType)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_type")
+			return nil, errors.New("Failed decoding dbType")
 		}
-		name, err := base64.StdEncoding.DecodeString(db_name)
+		ccName, err := base64.StdEncoding.DecodeString(dbName)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_name")
+			return nil, errors.New("Failed decoding dbName")
 		}
-		search_text, err := base64.StdEncoding.DecodeString(db_search_text)
+		ccSearchText, err := base64.StdEncoding.DecodeString(dbSearchText)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_search_text")
+			return nil, errors.New("Failed decoding dbSearchText")
 		}
-		tenant_id, err := base64.StdEncoding.DecodeString(db_tenant_id)
+		ccTenantID, err := base64.StdEncoding.DecodeString(dbTenantID)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_tenant_id")
+			return nil, errors.New("Failed decoding dbTenantID")
 		}
 
 		ok, err = stub.InsertRow("device", shim.Row{
 			Columns: []*shim.Column{
-				&shim.Column{Value: &shim.Column_String_{String_: id}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: additional_info}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: customer_id}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: type}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: name}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: search_text}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: tenant_id}}},
+				&shim.Column{Value: &shim.Column_String_{String_: ccID}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccAdditionalInfo}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCustomerID}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccTypes}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccName}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccSearchText}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccTenantID}}},
 		})
 
 		if !ok && err == nil {
-			return nil, errors.New("device table was already made.")
+			return nil, errors.New("device table was already made")
 		}
 	}
-	
+
 	// Migrate Complete
 	myLogger.Debugf("device Migrate ... Done")
-	
+
 	rows, err := db.Query("SELECT id, credentials_id, credentials_type, credentials_value, device_id from device_credentials")
 	if err != nil {
 		return nil, errors.New("Can't get device_credentials table")
 	}
 	defer rows.Close()
 
-	var db_id string
-	var db_credentials_id string
-	var db_credentials_type string
-	var db_credentials_value string
-	var db_device_id string
+	var dbID string
+	var dbCredentialsID string
+	var dbCredentialsType string
+	var dbCredentialsValue string
+	var dbDeviceID string
 	for rows.Next() {
-		err := rows.Scan(&db_id, &db_credentials_id, &db_credentials_type, &db_credentials_value, &db_device_id)
+		err := rows.Scan(&dbID, &dbCredentialsID, &dbCredentialsType, &dbCredentialsValue, &dbDeviceID)
 		if err != nil {
 			return nil, errors.New("Can't get device_credentials table rows")
 		}
 
-		id := db_id
-		credentials_id, err := base64.StdEncoding.DecodeString(db_credentials_id)
+		ccID := dbID
+		ccCredentialsID, err := base64.StdEncoding.DecodeString(dbCredentialsID)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_credentials_id")
+			return nil, errors.New("Failed decoding dbCredentialsID")
 		}
-		credentials_type, err := base64.StdEncoding.DecodeString(db_credentials_type)
+		ccCredentialsType, err := base64.StdEncoding.DecodeString(dbCredentialsType)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_credentials_type")
+			return nil, errors.New("Failed decoding dbCredentialsType")
 		}
-		credentials_value, err := base64.StdEncoding.DecodeString(db_credentials_value)
+		ccCredentialsValue, err := base64.StdEncoding.DecodeString(dbCredentialsValue)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_credentials_value")
+			return nil, errors.New("Failed decoding dbCredentialsValue")
 		}
-		device_id, err := base64.StdEncoding.DecodeString(db_device_id)
+		ccDeviceID, err := base64.StdEncoding.DecodeString(dbDeviceID)
 		if err != nil {
-			return nil, errors.New("Failed decoding db_device_id")
+			return nil, errors.New("Failed decoding dbDeviceID")
 		}
 
 		ok, err = stub.InsertRow("deviceCredentials", shim.Row{
 			Columns: []*shim.Column{
-				&shim.Column{Value: &shim.Column_String_{String_: id}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: credentials_id}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: credentials_type}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: credentials_value}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: device_id}}},
+				&shim.Column{Value: &shim.Column_String_{String_: ccID}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsType}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsValue}},
+				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}},
 		})
 
 		if !ok && err == nil {
-			return nil, errors.New("device_credentials table was already made.")
+			return nil, errors.New("device_credentials table was already made")
 		}
 	}
-	
+
 	// Migrate Complete
 	myLogger.Debugf("device_credentials Migrate ... Done")
 
@@ -352,7 +349,6 @@ func (t *AssetManagementChaincode) Invoke(stub shim.ChaincodeStubInterface, func
 		// Transfer ownership
 		return t.authenticate(stub, args)
 	}
-	
 
 	return nil, errors.New("Received unknown function invocation")
 }
