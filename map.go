@@ -56,14 +56,14 @@ func (t *AssetManagementChaincode) Init(stub shim.ChaincodeStubInterface, functi
 	}
 
 	// Create deviceCredentials table
-	errr := stub.CreateTable("deviceCredentials", []*shim.ColumnDefinition{
+	err = stub.CreateTable("deviceCredentials", []*shim.ColumnDefinition{
 		&shim.ColumnDefinition{Name: "id", Type: shim.ColumnDefinition_STRING, Key: true},
 		&shim.ColumnDefinition{Name: "credentialsId", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "credentialsType", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "credentialsValue", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "deviceId", Type: shim.ColumnDefinition_BYTES, Key: false},
 	})
-	if errr != nil {
+	if err != nil {
 		return nil, errors.New("Failed creating deviceCredentials table")
 	}
 
@@ -151,19 +151,19 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	// Migrate Complete
 	myLogger.Debugf("device Migrate ... Done")
 
-	rowss, err := db.Query("SELECT id, credentials_id, credentials_type, credentials_value, device_id from device_credentials")
+	rows, err = db.Query("SELECT id, credentials_id, credentials_type, credentials_value, device_id from device_credentials")
 	if err != nil {
 		return nil, errors.New("Can't get device_credentials table")
 	}
-	defer rowss.Close()
+	defer rows.Close()
 
 	// var dbID string
 	var dbCredentialsID string
 	var dbCredentialsType string
 	var dbCredentialsValue string
 	var dbDeviceID string
-	for rowss.Next() {
-		err := rowss.Scan(&dbID, &dbCredentialsID, &dbCredentialsType, &dbCredentialsValue, &dbDeviceID)
+	for rows.Next() {
+		err := rows.Scan(&dbID, &dbCredentialsID, &dbCredentialsType, &dbCredentialsValue, &dbDeviceID)
 		if err != nil {
 			return nil, errors.New("Can't get device_credentials table rows")
 		}
