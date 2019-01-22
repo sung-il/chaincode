@@ -389,8 +389,8 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 
 	row, err := stub.GetRow(tableName, columns)
 	if err != nil {
-		myLogger.Debugf("Failed get data [%s]: [%s]", string(myTable.Name), err)
-		return nil, fmt.Errorf("Failed  get data [%s]: [%s]", string(myTable.Name), err)
+		myLogger.Debugf("Failed get data [%s]: [%s]", string(tableName), err)
+		return nil, fmt.Errorf("Failed  get data [%s]: [%s]", string(tableName), err)
 	}
 
 	// row, err := stub.GetRow("device", columns)
