@@ -360,7 +360,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 	}
 
 	var err error
-	
+
 	if len(args) != 1 {
 		myLogger.Debug("Incorrect number of arguments. Expecting name of an asset to query")
 		return nil, errors.New("Incorrect number of arguments. Expecting name of an asset to query")
@@ -376,14 +376,12 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 		return nil, fmt.Errorf("Failed get table [%s]: [%s]", string(tableName), err)
 	}
 
-	
-
 	// myTableName, err := base64.StdEncoding.DecodeString(myTable.Name)
 	// if err != nil {
 	// 	return nil, errors.New("Failed decoding myTableName")
 	// }
 
-	ccTest_ID := '1e91e194d6681d0b358897730171392'
+	ccTest_ID := "1e91e194d6681d0b358897730171392"
 
 	var columns []shim.Column
 	col1 := shim.Column{Value: &shim.Column_String_{String_: ccTest_ID}}
