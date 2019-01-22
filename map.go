@@ -29,12 +29,6 @@ import (
 
 var myLogger = logging.MustGetLogger("asset_mgm")
 
-const (
-	DB_USER     = "postgres",
-	DB_PASSWORD = "",
-	DB_NAME     = "thingsboard"
-)
-
 type AssetManagementChaincode struct {
 }
 
