@@ -395,7 +395,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 
 	myLogger.Debugf("Query done [% x]", row.Columns[4].GetBytes())
 
-	return row.Columns[4].GetBytes(), nil
+	return row.Columns[4].GetBytes_(), nil
 
 	// return myTableName, nil
 }
