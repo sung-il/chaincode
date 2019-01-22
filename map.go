@@ -28,7 +28,7 @@ import (
 	logging "github.com/op/go-logging"
 )
 
-var myLogger = logging.MustGetLogger("asset_mgm")
+var myLogger = logging.MustGetLogger("device_mgmt")
 
 type AssetManagementChaincode struct {
 }
@@ -132,7 +132,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 			return nil, errors.New("Failed decoding dbTenantID")
 		}
 
-		ok, err = stub.InsertRow("device", shim.Row{
+		ok, err := stub.InsertRow("device", shim.Row{
 			Columns: []*shim.Column{
 				&shim.Column{Value: &shim.Column_String_{String_: ccID}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccAdditionalInfo}},
@@ -157,7 +157,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	}
 	defer rows.Close()
 
-	var dbID string
+	// var dbID string
 	var dbCredentialsID string
 	var dbCredentialsType string
 	var dbCredentialsValue string
@@ -186,7 +186,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 			return nil, errors.New("Failed decoding dbDeviceID")
 		}
 
-		ok, err = stub.InsertRow("deviceCredentials", shim.Row{
+		ok, err := stub.InsertRow("deviceCredentials", shim.Row{
 			Columns: []*shim.Column{
 				&shim.Column{Value: &shim.Column_String_{String_: ccID}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}},
