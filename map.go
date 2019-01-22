@@ -361,7 +361,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 
 	var err error
 
-	if len(args) != 0 {
+	if len(args) != 1 {
 		myLogger.Debug("Incorrect number of arguments. Expecting name of an asset to query")
 		return nil, errors.New("Incorrect number of arguments. Expecting name of an asset to query")
 	}
