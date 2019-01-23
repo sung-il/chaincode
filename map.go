@@ -100,7 +100,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	var dbName string
 	var dbSearchText string
 	var dbTenantID string
-	var ccID []byte
+	var ccID string
 	var ccAdditionalInfo []byte
 	var ccCustomerID []byte
 	var ccTypes []byte
