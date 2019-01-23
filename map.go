@@ -79,7 +79,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("Incorrect number of arguments. Expecting 0")
 	}
 
-	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32810/thingsboard?sslmode=disable")
+	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32846/thingsboard?sslmode=disable")
 
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
@@ -87,34 +87,34 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT id, additional_info, customer_id, type, name, search_text, tenant_id from device")
+	rows, err := db.Query("SELECT id, customer_id, type, name, search_text, tenant_id from device")
 	if err != nil {
 		return nil, errors.New("Can't get device table")
 	}
 	defer rows.Close()
 
 	var dbID string
-	var dbAdditionalInfo string
+	// var dbAdditionalInfo string
 	var dbCustomerID string
 	var dbType string
 	var dbName string
 	var dbSearchText string
 	var dbTenantID string
 	var ccID string
-	var ccAdditionalInfo []byte
+	// var ccAdditionalInfo []byte
 	var ccCustomerID []byte
 	var ccTypes []byte
 	var ccName []byte
 	var ccSearchText []byte
 	var ccTenantID []byte
 	for rows.Next() {
-		err := rows.Scan(&dbID, &dbAdditionalInfo, &dbCustomerID, &dbType, &dbName, &dbSearchText, &dbTenantID)
+		err := rows.Scan(&dbID, &dbCustomerID, &dbType, &dbName, &dbSearchText, &dbTenantID)
 		if err != nil {
 			return nil, errors.New("Can't get device table rows")
 		}
 
 		ccID = dbID
-		ccAdditionalInfo = []byte(dbAdditionalInfo)
+		// ccAdditionalInfo = []byte(dbAdditionalInfo)
 		ccCustomerID = []byte(dbCustomerID)
 		ccTypes = []byte(dbType)
 		ccName = []byte(dbName)
@@ -149,7 +149,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 		ok, err := stub.InsertRow("device", shim.Row{
 			Columns: []*shim.Column{
 				&shim.Column{Value: &shim.Column_String_{String_: ccID}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccAdditionalInfo}},
+				// &shim.Column{Value: &shim.Column_Bytes{Bytes: ccAdditionalInfo}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCustomerID}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccTypes}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccName}},
@@ -165,7 +165,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	// Migrate Complete
 	myLogger.Debugf("device Migrate ... Done")
 
-	rows, err = db.Query("SELECT id, credentials_id, credentials_type, credentials_value, device_id from device_credentials")
+	rows, err = db.Query("SELECT id, credentials_id, credentials_type, device_id from device_credentials")
 	if err != nil {
 		return nil, errors.New("Can't get device_credentials table")
 	}
@@ -174,14 +174,14 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 	// var dbID string
 	var dbCredentialsID string
 	var dbCredentialsType string
-	var dbCredentialsValue string
+	// var dbCredentialsValue string
 	var dbDeviceID string
 	var ccCredentialsID []byte
 	var ccCredentialsType []byte
-	var ccCredentialsValue []byte
+	// var ccCredentialsValue []byte
 	var ccDeviceID []byte
 	for rows.Next() {
-		err := rows.Scan(&dbID, &dbCredentialsID, &dbCredentialsType, &dbCredentialsValue, &dbDeviceID)
+		err := rows.Scan(&dbID, &dbCredentialsID, &dbCredentialsType, &dbDeviceID)
 		if err != nil {
 			return nil, errors.New("Can't get device_credentials table rows")
 		}
@@ -189,7 +189,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 		ccID = dbID
 		ccCredentialsID = []byte(dbCredentialsID)
 		ccCredentialsType = []byte(dbCredentialsType)
-		ccCredentialsValue = []byte(dbCredentialsValue)
+		// ccCredentialsValue = []byte(dbCredentialsValue)
 		ccDeviceID = []byte(dbDeviceID)
 		// ccCredentialsID, err := base64.StdEncoding.DecodeString(dbCredentialsID)
 		// if err != nil {
@@ -213,7 +213,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 				&shim.Column{Value: &shim.Column_String_{String_: ccID}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsType}},
-				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsValue}},
+				//&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsValue}},
 				&shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}},
 		})
 
