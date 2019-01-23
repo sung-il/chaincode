@@ -23,7 +23,7 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/hyperledger/fabric/core/crypto/primitives"
+	_ "github.com/hyperledger/fabric/core/crypto/primitives"
 	_ "github.com/lib/pq"
 	logging "github.com/op/go-logging"
 )
@@ -429,7 +429,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 }
 
 func main() {
-	primitives.SetSecurityLevel("SHA3", 256)
+	// primitives.SetSecurityLevel("SHA3", 256)
 	err := shim.Start(new(AssetManagementChaincode))
 	if err != nil {
 		fmt.Printf("Error starting AssetManagementChaincode: %s", err)
