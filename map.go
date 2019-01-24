@@ -402,7 +402,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 	ccTestID := "1e91e194d6681d0b358897730171392"
 
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: string(ccTestID})}
+	col1 := shim.Column{Value: &shim.Column_String_{String_: string(ccTestID)}}
 	columns = append(columns, col1)
 
 	row, err := stub.GetRow("device", columns)
