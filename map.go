@@ -79,7 +79,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("Incorrect number of arguments. Expecting 0")
 	}
 
-	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32846/thingsboard?sslmode=disable")
+	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32902/thingsboard?sslmode=disable")
 
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
