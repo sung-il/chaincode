@@ -402,13 +402,13 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 	ccTestID := "1e91e194d6681d0b358897730171392"
 
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: ccTestID}}
+	col1 := shim.Column{Value: &shim.Column_String_{String_: string(ccTestID})}
 	columns = append(columns, col1)
 
 	row, err := stub.GetRow("device", columns)
 	if err != nil {
-		myLogger.Debugf("Failed get data [%s]: [%s]", string(tableName), err)
-		return nil, fmt.Errorf("Failed  get data [%s]: [%s]", string(tableName), err)
+		myLogger.Debugf("Failed get data [%s]: [%s]", "device", err)
+		return nil, fmt.Errorf("Failed  get data [%s]: [%s]", "device", err)
 	}
 
 	// row, err := stub.GetRow("device", columns)
@@ -425,7 +425,7 @@ func (t *AssetManagementChaincode) Query(stub shim.ChaincodeStubInterface, funct
 }
 
 func main() {
-	// primitives.SetSecurityLevel("SHA3", 256)
+	primitives.SetSecurityLevel("SHA3", 256)
 	err := shim.Start(new(AssetManagementChaincode))
 	if err != nil {
 		fmt.Printf("Error starting AssetManagementChaincode: %s", err)
