@@ -23,7 +23,7 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	_ "github.com/hyperledger/fabric/core/crypto/primitives"
+	"github.com/hyperledger/fabric/core/crypto/primitives"
 	_ "github.com/lib/pq"
 	logging "github.com/op/go-logging"
 )
