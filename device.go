@@ -44,7 +44,7 @@ func (t *AssetManagementChaincode) Init(stub shim.ChaincodeStubInterface, functi
 	// Create device table
 	err := stub.CreateTable("device", []*shim.ColumnDefinition{
 		&shim.ColumnDefinition{Name: "id", Type: shim.ColumnDefinition_STRING, Key: true},
-		&shim.ColumnDefinition{Name: "additionalInfo", Type: shim.ColumnDefinition_BYTES, Key: false},
+		//&shim.ColumnDefinition{Name: "additionalInfo", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "customerId", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "type", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "name", Type: shim.ColumnDefinition_BYTES, Key: false},
@@ -60,7 +60,7 @@ func (t *AssetManagementChaincode) Init(stub shim.ChaincodeStubInterface, functi
 		&shim.ColumnDefinition{Name: "id", Type: shim.ColumnDefinition_STRING, Key: true},
 		&shim.ColumnDefinition{Name: "credentialsId", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "credentialsType", Type: shim.ColumnDefinition_BYTES, Key: false},
-		&shim.ColumnDefinition{Name: "credentialsValue", Type: shim.ColumnDefinition_BYTES, Key: false},
+		//&shim.ColumnDefinition{Name: "credentialsValue", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "deviceId", Type: shim.ColumnDefinition_BYTES, Key: false},
 	})
 	if err != nil {
@@ -79,7 +79,7 @@ func (t *AssetManagementChaincode) migrate(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("Incorrect number of arguments. Expecting 0")
 	}
 
-	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32902/thingsboard?sslmode=disable")
+	dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32846/thingsboard?sslmode=disable")
 
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
