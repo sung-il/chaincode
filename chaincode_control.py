@@ -91,7 +91,7 @@ def send_query(res):
                             \"name\": \"%s\" \
                         }, \
                         \"ctorMsg\": { \
-                            \"args\":[\"query\"] \
+                            \"args\":[\"query\", \"1e91e194d6681d0b358897730171392\"] \
                         }, \
                         \"secureContext\": \"lukas\" \
                     }, \
