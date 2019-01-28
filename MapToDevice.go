@@ -150,18 +150,13 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 		ccTestID := args[0]
 
-		// var columns []shim.Column
-		// col1 := shim.Column{Value: &shim.Column_String_{String_: ccTestID}}
-		// columns = append(columns, col1)
+		var columns []shim.Column
+		cmTestID := shim.Column{Value: &shim.Column_String_{String_: ccTestID}}
+		columns = append(columns, cmTestID)
 
-		// row, err := stub.GetRow("device", columns)
-		// if err != nil {
-		// 	return nil, fmt.Errorf("Failed  get data [%s]: [%s]", "device", err)
-		// }
-
-		row, err := t.queryTable(stub, ccTestID)
+		row, err := stub.GetRow("device", columns)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Failed  get data [%s]: [%s]", "device", err)
 		}
 
 		return row.Columns[1].GetBytes(), nil
