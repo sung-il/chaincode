@@ -17,9 +17,10 @@ limitations under the License.
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
-	"database/sql"
+
 	_ "github.com/lib/pq"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -69,15 +70,15 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		if len(args) != 0 {
 			return nil, errors.New("Incorrect number of arguments. Expecting 0")
 		}
-	
+
 		dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32902/thingsboard?sslmode=disable")
-	
+
 		db, err := sql.Open("postgres", dbinfo)
 		if err != nil {
 			return nil, errors.New("Can't open postgresql")
 		}
 		defer db.Close()
-		
+
 		rows, err := db.Query("SELECT id, credentials_id, device_id from device_credentials")
 		if err != nil {
 			return nil, errors.New("Can't get device_credentials table")
@@ -96,16 +97,32 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 				return nil, errors.New("Can't get device_credentials table rows")
 			}
 
-			ccID = dbID
+			ccID = string(dbID)
 			ccCredentialsID = []byte(dbCredentialsID)
 			ccDeviceID = []byte(dbDeviceID)
 
-			ok, err := stub.InsertRow("deviceCredentials", shim.Row{
-				Columns: []*shim.Column{
-					&shim.Column{Value: &shim.Column_String_{String_: ccID}},
-					&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}},
-					&shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}},
-			})
+			var columns []*shim.Column
+
+			cmID := shim.Column{Value: &shim.Column_String_{String_: ccID}}
+			cmCredentialsID := shim.Column{Value: &shim.Column_String_{Bytes: ccCredentialsID}}
+			cmDeviceID := shim.Column{Value: &shim.Column_String_{Bytes: ccDeviceID}}
+
+			columns = append(columns, &cmID)
+			columns = append(columns, &cmCredentialsID)
+			columns = append(columns, &cmDeviceID)
+
+			row := shim.Row{Columns: columns}
+			ok, err := stub.InsertRow("deviceCredentials", row)
+			if err != nil {
+				return nil, fmt.Errorf("Create operation failed. %s", err)
+			}
+
+			// ok, err := stub.InsertRow("deviceCredentials", shim.Row{
+			// 	Columns: []*shim.Column{
+			// 		&shim.Column{Value: &shim.Column_String_{String_: ccID}},
+			// 		&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}},
+			// 		&shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}},
+			// })
 
 			if !ok && err == nil {
 				return nil, errors.New("device_credentials table was already made")
