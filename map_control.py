@@ -15,7 +15,7 @@ def send_deploy():
                     \"params\": { \
                         \"type\": 1, \
                         \"chaincodeID\":{ \
-                            \"path\": \"github.com/hyperledger/fabric/examples/chaincode/go/map" \
+                            \"path\": \"github.com/hyperledger/fabric/examples/chaincode/go/map\" \
                         }, \
                         \"ctorMsg\": { \
                             \"args\":[\"init\"] \
