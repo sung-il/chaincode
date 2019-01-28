@@ -104,8 +104,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 			var columns []*shim.Column
 
 			cmID := shim.Column{Value: &shim.Column_String_{String_: ccID}}
-			cmCredentialsID := shim.Column{Value: &shim.Column_String_{Bytes: ccCredentialsID}}
-			cmDeviceID := shim.Column{Value: &shim.Column_String_{Bytes: ccDeviceID}}
+			cmCredentialsID := shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}}
+			cmDeviceID := shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}
 
 			columns = append(columns, &cmID)
 			columns = append(columns, &cmCredentialsID)
