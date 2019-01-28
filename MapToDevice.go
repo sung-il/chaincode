@@ -47,7 +47,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	}
 
 	// Create deviceCredentials table
-	err = stub.CreateTable("deviceCredentials", []*shim.ColumnDefinition{
+	err := stub.CreateTable("deviceCredentials", []*shim.ColumnDefinition{
 		&shim.ColumnDefinition{Name: "id", Type: shim.ColumnDefinition_STRING, Key: true},
 		&shim.ColumnDefinition{Name: "credentialsId", Type: shim.ColumnDefinition_BYTES, Key: false},
 		&shim.ColumnDefinition{Name: "deviceId", Type: shim.ColumnDefinition_BYTES, Key: false},
