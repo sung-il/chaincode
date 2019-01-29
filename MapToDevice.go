@@ -94,8 +94,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 				fmt.Printf("Error putting state %s", err)
 				return nil, fmt.Errorf("put operation failed. Error updating state: %s", err)
 			}
-
-			return nil, nil
 		}
 
 		return nil, nil
