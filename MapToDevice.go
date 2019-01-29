@@ -87,7 +87,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 			ccID = string(dbID)
 			ccCredentialsID = []byte(dbCredentialsID)
 
-			err := stub.PutState(ccID, ccCredentialsID)
+			err = stub.PutState(ccID, ccCredentialsID)
 			if err != nil {
 				fmt.Printf("Error putting state %s", err)
 				return nil, fmt.Errorf("put operation failed. Error updating state: %s", err)
