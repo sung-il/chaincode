@@ -18,10 +18,9 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
-
-	_ "github.com/lib/pq"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -47,16 +46,6 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Incorrect number of arguments. Expecting 0")
 	}
 
-	// Create deviceCredentials table
-	err := stub.CreateTable("deviceCredentials", []*shim.ColumnDefinition{
-		&shim.ColumnDefinition{Name: "id", Type: shim.ColumnDefinition_STRING, Key: true},
-		&shim.ColumnDefinition{Name: "credentialsId", Type: shim.ColumnDefinition_BYTES, Key: false},
-		&shim.ColumnDefinition{Name: "deviceId", Type: shim.ColumnDefinition_BYTES, Key: false},
-	})
-	if err != nil {
-		return nil, errors.New("Failed creating deviceCredentials table")
-	}
-
 	return nil, nil
 }
 
@@ -79,7 +68,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		}
 		defer db.Close()
 
-		rows, err := db.Query("SELECT id, credentials_id, device_id from device_credentials")
+		rows, err := db.Query("SELECT id, credentials_id from device_credentials")
 		if err != nil {
 			return nil, errors.New("Can't get device_credentials table")
 		}
@@ -87,49 +76,51 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 		var dbID string
 		var dbCredentialsID string
-		var dbDeviceID string
 		var ccID string
 		var ccCredentialsID []byte
-		var ccDeviceID []byte
 		for rows.Next() {
-			err := rows.Scan(&dbID, &dbCredentialsID, &dbDeviceID)
+			err := rows.Scan(&dbID, &dbCredentialsID)
 			if err != nil {
 				return nil, errors.New("Can't get device_credentials table rows")
 			}
 
 			ccID = string(dbID)
 			ccCredentialsID = []byte(dbCredentialsID)
-			ccDeviceID = []byte(dbDeviceID)
 
-			var columns []*shim.Column
-
-			cmID := shim.Column{Value: &shim.Column_String_{String_: ccID}}
-			cmCredentialsID := shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}}
-			cmDeviceID := shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}
-
-			columns = append(columns, &cmID)
-			columns = append(columns, &cmCredentialsID)
-			columns = append(columns, &cmDeviceID)
-
-			row := shim.Row{Columns: columns}
-			ok, err := stub.InsertRow("deviceCredentials", row)
+			err := stub.PutState(ccID, ccCredentialsID)
 			if err != nil {
-				return nil, fmt.Errorf("Create operation failed. %s", err)
+				fmt.Printf("Error putting state %s", err)
+				return nil, fmt.Errorf("put operation failed. Error updating state: %s", err)
 			}
 
-			// ok, err := stub.InsertRow("deviceCredentials", shim.Row{
-			// 	Columns: []*shim.Column{
-			// 		&shim.Column{Value: &shim.Column_String_{String_: ccID}},
-			// 		&shim.Column{Value: &shim.Column_Bytes{Bytes: ccCredentialsID}},
-			// 		&shim.Column{Value: &shim.Column_Bytes{Bytes: ccDeviceID}}},
-			// })
+			return nil, nil
+		}
 
-			if !ok && err == nil {
-				return nil, errors.New("device_credentials table was already made")
+		return nil, nil
+
+	case "remove":
+		if len(args) != 0 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 0")
+		}
+
+		keysIter, err := stub.RangeQueryState("", "")
+		if err != nil {
+			return nil, fmt.Errorf("keys operation failed. Error accessing state: %s", err)
+		}
+		defer keysIter.Close()
+
+		for keysIter.HasNext() {
+			key, _, iterErr := keysIter.Next()
+			if iterErr != nil {
+				return nil, fmt.Errorf("keys operation failed. Error accessing state: %s", err)
+			}
+			err := stub.DelState(key)
+			if err != nil {
+				return nil, fmt.Errorf("remove operation failed. Error updating state: %s", err)
 			}
 		}
 
-		return nil, err
+		return nil, nil
 
 	default:
 		return nil, errors.New("Unsupported operation")
@@ -143,23 +134,40 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 	switch function {
 
-	case "query":
+	case "get":
 		if len(args) < 1 {
-			return nil, errors.New("get operation must include one argument, a id")
+			return nil, errors.New("get operation must include one argument, a key")
 		}
-
-		ccTestID := args[0]
-
-		var columns []shim.Column
-		cmTestID := shim.Column{Value: &shim.Column_String_{String_: ccTestID}}
-		columns = append(columns, cmTestID)
-
-		row, err := stub.GetRow("device", columns)
+		key := args[0]
+		value, err := stub.GetState(key)
 		if err != nil {
-			return nil, fmt.Errorf("Failed  get data [%s]: [%s]", "device", err)
+			return nil, fmt.Errorf("get operation failed. Error accessing state: %s", err)
+		}
+		return value, nil
+
+	case "keys":
+
+		keysIter, err := stub.RangeQueryState("", "")
+		if err != nil {
+			return nil, fmt.Errorf("keys operation failed. Error accessing state: %s", err)
+		}
+		defer keysIter.Close()
+
+		var keys []string
+		for keysIter.HasNext() {
+			key, _, iterErr := keysIter.Next()
+			if iterErr != nil {
+				return nil, fmt.Errorf("keys operation failed. Error accessing state: %s", err)
+			}
+			keys = append(keys, key)
 		}
 
-		return row.Columns[1].GetBytes(), nil
+		jsonKeys, err := json.Marshal(keys)
+		if err != nil {
+			return nil, fmt.Errorf("keys operation failed. Error marshaling JSON: %s", err)
+		}
+
+		return jsonKeys, nil
 
 	default:
 		return nil, errors.New("Unsupported operation")
