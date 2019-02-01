@@ -62,7 +62,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 			return nil, errors.New("Incorrect number of arguments. Expecting 0")
 		}
 
-		dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32963/thingsboard?sslmode=disable")
+		dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.140:32778/thingsboard?sslmode=disable")
 
 		db, err := sql.Open("postgres", dbinfo)
 		if err != nil {
@@ -78,18 +78,18 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 		var dbID string
 		var dbCredentialsID string
-		var ccID string
-		var ccCredentialsID []byte
+		var ccID []byte
+		var ccCredentialsID string
 		for rows.Next() {
 			err := rows.Scan(&dbID, &dbCredentialsID)
 			if err != nil {
 				return nil, errors.New("Can't get device_credentials table rows")
 			}
 
-			ccID = string(dbID)
-			ccCredentialsID = []byte(dbCredentialsID)
+			ccCredentialsID = string(dbCredentialsID)
+			ccID = []byte(dbID)
 
-			err = stub.PutState(ccID, ccCredentialsID)
+			err = stub.PutState(ccCredentialsID, ccID)
 			if err != nil {
 				fmt.Printf("Error putting state %s", err)
 				return nil, fmt.Errorf("put operation failed. Error updating state: %s", err)
