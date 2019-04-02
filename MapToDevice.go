@@ -62,7 +62,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 			return nil, errors.New("Incorrect number of arguments. Expecting 0")
 		}
 
-		dbinfo := fmt.Sprintf("postgres://postgres@203.253.25.105:5432/thingsboard?sslmode=disable")
+		dbinfo := fmt.Sprintf("postgres://postgres:postgres@203.253.25.105:5432/thingsboard?sslmode=disable")
 
 		db, err := sql.Open("postgres", dbinfo)
 		if err != nil {
