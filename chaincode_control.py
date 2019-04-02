@@ -5,7 +5,7 @@ import requests
 def send_deploy():
     try:
         response = requests.post(
-            url="http://203.253.25.140:7050/chaincode",
+            url="http://203.253.21.91:7050/chaincode",
             headers={
                 "Content-Type": "text/plain; charset=utf-8",
             },
@@ -46,7 +46,7 @@ def send_invoke(res):
         print(res["result"])
         print(type(res["result"]["message"]))
         response = requests.post(
-            url="http://203.253.25.140:7050/chaincode",
+            url="http://203.253.21.91:7050/chaincode",
             headers={
                 "Content-Type": "text/plain; charset=utf-8",
             },
@@ -78,7 +78,7 @@ def send_query(res):
     try:
         print(res["result"]["message"])
         response = requests.post(
-            url="http://203.253.25.140:7050/chaincode",
+            url="http://203.253.21.91:7050/chaincode",
             headers={
                 "Content-Type": "text/plain; charset=utf-8",
             },
@@ -91,7 +91,7 @@ def send_query(res):
                             \"name\": \"%s\" \
                         }, \
                         \"ctorMsg\": { \
-                            \"args\":[\"query\", \"1e91e194d6681d0b358897730171392\"] \
+                            \"args\":[\"keys\"] \
                         }, \
                         \"secureContext\": \"lukas\" \
                     }, \
